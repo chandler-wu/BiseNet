@@ -1,3 +1,4 @@
+
 import os
 import os.path as osp
 import argparse
@@ -73,6 +74,7 @@ def gen_ade20k():
 
         with open(f'{save_path}/{mode}.txt', 'w') as fw:
             fw.write('\n'.join(lines))
+
 
 
 if __name__ == '__main__':

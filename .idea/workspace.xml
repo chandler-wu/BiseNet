@@ -1,7 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4f096abc-8aae-4262-95ae-9c617184b21e" name="Changes" comment="‘push’">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist_train.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dist_train.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/logger.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/lr_scheduler.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/lr_scheduler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meters.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/bisenetv1.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/bisenetv1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/bisenetv2.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/bisenetv2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/resnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ohem_ce_loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ohem_ce_loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/check_dataset_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/check_dataset_info.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/conver_to_trt.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/conver_to_trt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/demo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/demo_video.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/demo_video.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/export_libtorch.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/export_libtorch.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/export_onnx.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/export_onnx.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/gen_dataset_annos.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/gen_dataset_annos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/train_amp.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/train_amp.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2WfZqqOglYSbb1zoCO9TbJrSums" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "D:/code/seg/BiseNet",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4f096abc-8aae-4262-95ae-9c617184b21e" name="Changes" comment="" />
+      <created>1697125788091</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1697125788091</updated>
+      <workItem from="1697125789130" duration="406000" />
+    </task>
+    <task id="LOCAL-00001" summary="‘push’">
+      <option name="closed" value="true" />
+      <created>1697125848519</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1697125848519</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="‘push’" />
+    <option name="LAST_COMMIT_MESSAGE" value="‘push’" />
   </component>
 </project>

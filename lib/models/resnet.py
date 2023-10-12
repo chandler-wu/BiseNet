@@ -8,6 +8,7 @@ import torch.utils.model_zoo as modelzoo
 
 resnet18_url = 'https://download.pytorch.org/models/resnet18-5c106cde.pth'
 
+
 from torch.nn import BatchNorm2d
 
 
@@ -31,7 +32,7 @@ class BasicBlock(nn.Module):
                 nn.Conv2d(in_chan, out_chan,
                           kernel_size=1, stride=stride, bias=False),
                 BatchNorm2d(out_chan),
-            )
+                )
 
     def forward(self, x):
         residual = self.conv1(x)
@@ -51,7 +52,7 @@ class BasicBlock(nn.Module):
 
 def create_layer_basic(in_chan, out_chan, bnum, stride=1):
     layers = [BasicBlock(in_chan, out_chan, stride=stride)]
-    for i in range(bnum - 1):
+    for i in range(bnum-1):
         layers.append(BasicBlock(out_chan, out_chan, stride=1))
     return nn.Sequential(*layers)
 
@@ -77,9 +78,9 @@ class Resnet18(nn.Module):
         x = self.maxpool(x)
 
         x = self.layer1(x)
-        feat8 = self.layer2(x)  # 1/8
-        feat16 = self.layer3(feat8)  # 1/16
-        feat32 = self.layer4(feat16)  # 1/32
+        feat8 = self.layer2(x) # 1/8
+        feat16 = self.layer3(feat8) # 1/16
+        feat32 = self.layer4(feat16) # 1/32
         return feat8, feat16, feat32
 
     def init_weight(self):

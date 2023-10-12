@@ -1,3 +1,4 @@
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,9 +13,9 @@ class ConvBNReLU(nn.Module):
                  dilation=1, groups=1, bias=False):
         super(ConvBNReLU, self).__init__()
         self.conv = nn.Conv2d(
-            in_chan, out_chan, kernel_size=ks, stride=stride,
-            padding=padding, dilation=dilation,
-            groups=groups, bias=bias)
+                in_chan, out_chan, kernel_size=ks, stride=stride,
+                padding=padding, dilation=dilation,
+                groups=groups, bias=bias)
         self.bn = nn.BatchNorm2d(out_chan)
         self.relu = nn.ReLU(inplace=True)
 
@@ -41,6 +42,7 @@ class UpSample(nn.Module):
 
     def init_weight(self):
         nn.init.xavier_normal_(self.proj.weight, gain=1.)
+
 
 
 class DetailBranch(nn.Module):
@@ -97,7 +99,7 @@ class CEBlock(nn.Module):
         super(CEBlock, self).__init__()
         self.bn = nn.BatchNorm2d(128)
         self.conv_gap = ConvBNReLU(128, 128, 1, stride=1, padding=0)
-        # TODO: in paper here is naive conv2d, no bn-relu
+        #TODO: in paper here is naive conv2d, no bn-relu
         self.conv_last = ConvBNReLU(128, 128, 3, stride=1)
 
     def forward(self, x):
@@ -120,7 +122,7 @@ class GELayerS1(nn.Module):
                 in_chan, mid_chan, kernel_size=3, stride=1,
                 padding=1, groups=in_chan, bias=False),
             nn.BatchNorm2d(mid_chan),
-            nn.ReLU(inplace=True),  # not shown in paper
+            nn.ReLU(inplace=True), # not shown in paper
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(
@@ -157,7 +159,7 @@ class GELayerS2(nn.Module):
                 mid_chan, mid_chan, kernel_size=3, stride=1,
                 padding=1, groups=mid_chan, bias=False),
             nn.BatchNorm2d(mid_chan),
-            nn.ReLU(inplace=True),  # not shown in paper
+            nn.ReLU(inplace=True), # not shown in paper
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(
@@ -167,14 +169,14 @@ class GELayerS2(nn.Module):
         )
         self.conv2[1].last_bn = True
         self.shortcut = nn.Sequential(
-            nn.Conv2d(
-                in_chan, in_chan, kernel_size=3, stride=2,
-                padding=1, groups=in_chan, bias=False),
-            nn.BatchNorm2d(in_chan),
-            nn.Conv2d(
-                in_chan, out_chan, kernel_size=1, stride=1,
-                padding=0, bias=False),
-            nn.BatchNorm2d(out_chan),
+                nn.Conv2d(
+                    in_chan, in_chan, kernel_size=3, stride=2,
+                    padding=1, groups=in_chan, bias=False),
+                nn.BatchNorm2d(in_chan),
+                nn.Conv2d(
+                    in_chan, out_chan, kernel_size=1, stride=1,
+                    padding=0, bias=False),
+                nn.BatchNorm2d(out_chan),
         )
         self.relu = nn.ReLU(inplace=True)
 
@@ -262,7 +264,7 @@ class BGALayer(nn.Module):
                 128, 128, kernel_size=3, stride=1,
                 padding=1, bias=False),
             nn.BatchNorm2d(128),
-            nn.ReLU(inplace=True),  # not shown in paper
+            nn.ReLU(inplace=True), # not shown in paper
         )
 
     def forward(self, x_d, x_s):
@@ -277,6 +279,7 @@ class BGALayer(nn.Module):
         right = self.up2(right)
         out = self.conv(left + right)
         return out
+
 
 
 class SegmentHead(nn.Module):
@@ -294,7 +297,7 @@ class SegmentHead(nn.Module):
             nn.Sequential(
                 nn.Upsample(scale_factor=2),
                 ConvBNReLU(mid_chan, mid_chan2, 3, stride=1)
-            ) if aux else nn.Identity(),
+                ) if aux else nn.Identity(),
             nn.Conv2d(mid_chan2, out_chan, 1, 1, 0, bias=True),
             nn.Upsample(scale_factor=up_factor, mode='bilinear', align_corners=False)
         )
@@ -359,6 +362,7 @@ class BiSeNetV2(nn.Module):
                 nn.init.zeros_(module.bias)
         self.load_pretrain()
 
+
     def load_pretrain(self):
         state = modelzoo.load_url(backbone_url)
         for name, child in self.named_children():
@@ -382,6 +386,7 @@ class BiSeNetV2(nn.Module):
             else:
                 add_param_to_list(child, wd_params, nowd_params)
         return wd_params, nowd_params, lr_mul_wd_params, lr_mul_nowd_params
+
 
 
 if __name__ == "__main__":

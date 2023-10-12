@@ -2,7 +2,6 @@
 # -*- encoding: utf-8 -*-
 
 import sys
-
 sys.path.insert(0, '.')
 import os
 import os.path as osp
@@ -44,25 +43,22 @@ class SizePreprocessor(object):
         elif not self.shortside is None:
             h, w = imgs.size()[2:]
             ss = self.shortside
-            if h < w:
-                h, w = ss, int(ss / h * w)
-            else:
-                h, w = int(ss / w * h), ss
+            if h < w: h, w = ss, int(ss / h * w)
+            else: h, w = int(ss / w * h), ss
             new_size = h, w
-        elif not self.longside is None:  # long size limit
+        elif not self.longside is None: # long size limit
             h, w = imgs.size()[2:]
             if max(h, w) > self.longside:
                 ls = self.longside
-                if h < w:
-                    h, w = int(ls / w * h), ls
-                else:
-                    h, w = ls, int(ls / h * w)
+                if h < w: h, w = int(ls / w * h), ls
+                else: h, w = ls, int(ls / h * w)
                 new_size = h, w
 
         if not new_size is None:
             imgs = F.interpolate(imgs, size=new_size,
-                                 mode='bilinear', align_corners=False)
+                    mode='bilinear', align_corners=False)
         return imgs
+
 
 
 class Metrics(object):
@@ -77,12 +73,12 @@ class Metrics(object):
         keep = label != self.lb_ignore
         preds, label = preds[keep], label[keep]
         self.confusion += torch.bincount(
-            label * self.n_classes + preds,
-            minlength=self.n_classes ** 2
-        ).view(self.n_classes, self.n_classes)
+                label * self.n_classes + preds,
+                minlength=self.n_classes ** 2
+                ).view(self.n_classes, self.n_classes)
 
     @torch.no_grad()
-    def compute_metrics(self, ):
+    def compute_metrics(self,):
         if dist.is_initialized():
             dist.all_reduce(self.confusion, dist.ReduceOp.SUM)
 
@@ -116,20 +112,21 @@ class Metrics(object):
                 micro_precision + micro_recall + eps)
 
         metric_dict = dict(
-            weights=weights.tolist(),
-            ious=ious.tolist(),
-            miou=miou.item(),
-            fw_miou=fw_miou.item(),
-            f1_scores=f1_scores.tolist(),
-            macro_f1=macro_f1.item(),
-            micro_f1=micro_f1.item(),
-        )
+                weights=weights.tolist(),
+                ious=ious.tolist(),
+                miou=miou.item(),
+                fw_miou=fw_miou.item(),
+                f1_scores=f1_scores.tolist(),
+                macro_f1=macro_f1.item(),
+                micro_f1=micro_f1.item(),
+                )
         return metric_dict
+
 
 
 class MscEvalV0(object):
 
-    def __init__(self, n_classes, scales=(0.5,), flip=False, lb_ignore=255, size_processor=None):
+    def __init__(self, n_classes, scales=(0.5, ), flip=False, lb_ignore=255, size_processor=None):
         self.n_classes = n_classes
         self.scales = scales
         self.flip = flip
@@ -152,25 +149,25 @@ class MscEvalV0(object):
             label = label.squeeze(1).cuda()
             size = label.size()[-2:]
             probs = torch.zeros(
-                (N, n_classes, *size),
-                dtype=torch.float32).cuda().detach()
+                    (N, n_classes, *size),
+                    dtype=torch.float32).cuda().detach()
             for scale in self.scales:
                 sH, sW = int(scale * H), int(scale * W)
                 sH, sW = get_round_size((sH, sW))
                 im_sc = F.interpolate(imgs, size=(sH, sW),
-                                      mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=True)
 
                 im_sc = im_sc.cuda()
                 logits = net(im_sc)[0]
                 logits = F.interpolate(logits, size=size,
-                                       mode='bilinear', align_corners=True)
+                        mode='bilinear', align_corners=True)
                 probs += torch.softmax(logits, dim=1)
                 if self.flip:
-                    im_sc = torch.flip(im_sc, dims=(3,))
+                    im_sc = torch.flip(im_sc, dims=(3, ))
                     logits = net(im_sc)[0]
-                    logits = torch.flip(logits, dims=(3,))
+                    logits = torch.flip(logits, dims=(3, ))
                     logits = F.interpolate(logits, size=size,
-                                           mode='bilinear', align_corners=True)
+                            mode='bilinear', align_corners=True)
                     probs += torch.softmax(logits, dim=1)
             preds = torch.argmax(probs, dim=1)
             self.metric_observer.update(preds, label)
@@ -179,17 +176,18 @@ class MscEvalV0(object):
         return metric_dict
 
 
+
 class MscEvalCrop(object):
 
     def __init__(
-            self,
-            n_classes,
-            cropsize=1024,
-            cropstride=2. / 3,
-            flip=True,
-            scales=[0.5, 0.75, 1, 1.25, 1.5, 1.75],
-            lb_ignore=255,
-            size_processor=None
+        self,
+        n_classes,
+        cropsize=512,
+        cropstride=2./3,
+        flip=True,
+        scales=[0.5, 0.75, 1, 1.25, 1.5, 1.75],
+        lb_ignore=255,
+        size_processor=None
     ):
         self.n_classes = n_classes
         self.scales = scales
@@ -200,6 +198,7 @@ class MscEvalCrop(object):
 
         self.cropsize = cropsize if isinstance(cropsize, (list, tuple)) else (cropsize, cropsize)
         self.cropstride = cropstride
+
 
     def pad_tensor(self, inten):
         N, C, H, W = inten.size()
@@ -214,6 +213,7 @@ class MscEvalCrop(object):
         outten[:, :, hst:hed, wst:wed] = inten
         return outten, [hst, hed, wst, wed]
 
+
     def eval_chip(self, net, crop):
         prob = net(crop)[0].softmax(dim=1)
         if self.flip:
@@ -221,6 +221,7 @@ class MscEvalCrop(object):
             prob += net(crop)[0].flip(dims=(3,)).softmax(dim=1)
             prob = torch.exp(prob)
         return prob
+
 
     def crop_eval(self, net, im, n_classes):
         cropH, cropW = self.cropsize
@@ -245,6 +246,7 @@ class MscEvalCrop(object):
         prob = prob[:, :, hst:hed, wst:wed]
         return prob
 
+
     def scale_crop_eval(self, net, im, scale, size, n_classes):
         N, C, H, W = im.size()
         new_hw = [int(H * scale), int(W * scale)]
@@ -252,6 +254,7 @@ class MscEvalCrop(object):
         prob = self.crop_eval(net, im, n_classes)
         prob = F.interpolate(prob, size, mode='bilinear', align_corners=True)
         return prob
+
 
     @torch.no_grad()
     def __call__(self, net, dl):
@@ -288,10 +291,10 @@ def print_res_table(tname, heads, weights, metric, cat_metric):
     for k, v in metric.items():
         line = [k, '-'] + [f'{el:.6f}' for el in v]
         lines.append(line)
-    cat_res = [weights, ] + cat_metric
+    cat_res = [weights,] + cat_metric
     cat_res = [
-        [f'cat {idx}', ] + [f'{el:.6f}' for el in group]
-        for idx, group in enumerate(zip(*cat_res))]
+            [f'cat {idx}',] + [f'{el:.6f}' for el in group]
+            for idx,group in enumerate(zip(*cat_res))]
     content = cat_res + lines
     return heads, content
 
@@ -311,17 +314,17 @@ def eval_model(cfg, net):
     logger = logging.getLogger()
 
     size_processor = SizePreprocessor(
-        cfg.get('eval_start_shape'),
-        cfg.get('eval_start_shortside'),
-        cfg.get('eval_start_longside'),
-    )
+            cfg.get('eval_start_shape'),
+            cfg.get('eval_start_shortside'),
+            cfg.get('eval_start_longside'),
+            )
 
     single_scale = MscEvalV0(
-        n_classes=cfg.n_cats,
-        scales=(1.,),
-        flip=False,
-        lb_ignore=lb_ignore,
-        size_processor=size_processor
+            n_classes=cfg.n_cats,
+            scales=(1., ),
+            flip=False,
+            lb_ignore=lb_ignore,
+            size_processor=size_processor
     )
     logger.info('compute single scale metrics')
     metrics = single_scale(net, dl)
@@ -333,69 +336,72 @@ def eval_model(cfg, net):
     macro_f1.append(metrics['macro_f1'])
     micro_f1.append(metrics['micro_f1'])
 
-    single_crop = MscEvalCrop(
-        n_classes=cfg.n_cats,
-        cropsize=cfg.eval_crop,
-        cropstride=2. / 3,
-        flip=False,
-        scales=(1.,),
-        lb_ignore=lb_ignore,
-        size_processor=size_processor
-    )
-    logger.info('compute single scale crop metrics')
-    metrics = single_crop(net, dl)
-    heads.append('ssc')
-    mious.append(metrics['miou'])
-    fw_mious.append(metrics['fw_miou'])
-    cat_ious.append(metrics['ious'])
-    f1_scores.append(metrics['f1_scores'])
-    macro_f1.append(metrics['macro_f1'])
-    micro_f1.append(metrics['micro_f1'])
+    # jisaun scc
+    # single_crop = MscEvalCrop(
+    #         n_classes=cfg.n_cats,
+    #         cropsize=cfg.eval_crop,
+    #         cropstride=2. / 3,
+    #         flip=False,
+    #         scales=(1., ),
+    #         lb_ignore=lb_ignore,
+    #         size_processor=size_processor
+    # )
+    # logger.info('compute single scale crop metrics')
+    # metrics = single_crop(net, dl)
+    # heads.append('ssc')
+    # mious.append(metrics['miou'])
+    # fw_mious.append(metrics['fw_miou'])
+    # cat_ious.append(metrics['ious'])
+    # f1_scores.append(metrics['f1_scores'])
+    # macro_f1.append(metrics['macro_f1'])
+    # micro_f1.append(metrics['micro_f1'])
 
-    ms_flip = MscEvalV0(
-        n_classes=cfg.n_cats,
-        scales=cfg.eval_scales,
-        flip=True,
-        lb_ignore=lb_ignore,
-        size_processor=size_processor
-    )
-    logger.info('compute multi scale flip metrics')
-    metrics = ms_flip(net, dl)
-    heads.append('msf')
-    mious.append(metrics['miou'])
-    fw_mious.append(metrics['fw_miou'])
-    cat_ious.append(metrics['ious'])
-    f1_scores.append(metrics['f1_scores'])
-    macro_f1.append(metrics['macro_f1'])
-    micro_f1.append(metrics['micro_f1'])
+    # 计算msf
+    # ms_flip = MscEvalV0(
+    #         n_classes=cfg.n_cats,
+    #         scales=cfg.eval_scales,
+    #         flip=True,
+    #         lb_ignore=lb_ignore,
+    #         size_processor=size_processor
+    # )
+    # logger.info('compute multi scale flip metrics')
+    # metrics = ms_flip(net, dl)
+    # heads.append('msf')
+    # mious.append(metrics['miou'])
+    # fw_mious.append(metrics['fw_miou'])
+    # cat_ious.append(metrics['ious'])
+    # f1_scores.append(metrics['f1_scores'])
+    # macro_f1.append(metrics['macro_f1'])
+    # micro_f1.append(metrics['micro_f1'])
 
-    ms_flip_crop = MscEvalCrop(
-        n_classes=cfg.n_cats,
-        cropsize=cfg.eval_crop,
-        cropstride=2. / 3,
-        flip=True,
-        scales=cfg.eval_scales,
-        lb_ignore=lb_ignore,
-        size_processor=size_processor
-    )
-    logger.info('compute multi scale flip crop metrics')
-    metrics = ms_flip_crop(net, dl)
-    heads.append('msfc')
-    mious.append(metrics['miou'])
-    fw_mious.append(metrics['fw_miou'])
-    cat_ious.append(metrics['ious'])
-    f1_scores.append(metrics['f1_scores'])
-    macro_f1.append(metrics['macro_f1'])
-    micro_f1.append(metrics['micro_f1'])
+    # 计算 msfc
+    # ms_flip_crop = MscEvalCrop(
+    #         n_classes=cfg.n_cats,
+    #         cropsize=cfg.eval_crop,
+    #         cropstride=2. / 3,
+    #         flip=True,
+    #         scales=cfg.eval_scales,
+    #         lb_ignore=lb_ignore,
+    #         size_processor=size_processor
+    # )
+    # logger.info('compute multi scale flip crop metrics')
+    # metrics = ms_flip_crop(net, dl)
+    # heads.append('msfc')
+    # mious.append(metrics['miou'])
+    # fw_mious.append(metrics['fw_miou'])
+    # cat_ious.append(metrics['ious'])
+    # f1_scores.append(metrics['f1_scores'])
+    # macro_f1.append(metrics['macro_f1'])
+    # micro_f1.append(metrics['micro_f1'])
 
     weights = metrics['weights']
 
     metric = dict(mious=mious, fw_mious=fw_mious)
     iou_heads, iou_content = print_res_table('iou', heads,
-                                             weights, metric, cat_ious)
+            weights, metric, cat_ious)
     metric = dict(macro_f1=macro_f1, micro_f1=micro_f1)
     f1_heads, f1_content = print_res_table('f1 score', heads,
-                                           weights, metric, f1_scores)
+            weights, metric, f1_scores)
 
     net.aux_mode = org_aux
     return iou_heads, iou_content, f1_heads, f1_content
@@ -429,9 +435,9 @@ def evaluate(cfg, weight_pth):
 def parse_args():
     parse = argparse.ArgumentParser()
     parse.add_argument('--weight-path', dest='weight_pth', type=str,
-                       default='model_final.pth', )
+                       default='/workspace/gitlab/qianwu/code/BiSeNet/output/jingke/edge_busbar_piece_20230805/model_final.pth',)
     parse.add_argument('--config', dest='config', type=str,
-                       default='configs/bisenetv2.py', )
+            default='/workspace/gitlab/qianwu/code/BiSeNet/configs/jingke/edge_busbar_piece_20230807.py',)
     return parse.parse_args()
 
 

@@ -12,10 +12,11 @@ import cv2
 import numpy as np
 
 
+
+
 class BaseDataset(Dataset):
     '''
     '''
-
     def __init__(self, dataroot, annpath, trans_func=None, mode='train'):
         super(BaseDataset, self).__init__()
         assert mode in ('train', 'val', 'test')
@@ -60,13 +61,12 @@ class BaseDataset(Dataset):
 if __name__ == "__main__":
     from tqdm import tqdm
     from torch.utils.data import DataLoader
-
     ds = CityScapes('./data/', mode='val')
     dl = DataLoader(ds,
-                    batch_size=4,
-                    shuffle=True,
-                    num_workers=4,
-                    drop_last=True)
+                    batch_size = 4,
+                    shuffle = True,
+                    num_workers = 4,
+                    drop_last = True)
     for imgs, label in dl:
         print(len(imgs))
         for el in imgs:

@@ -1,3 +1,4 @@
+
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torch.distributed as dist
@@ -9,6 +10,9 @@ from lib.data.cityscapes_cv2 import CityScapes
 from lib.data.coco import CocoStuff
 from lib.data.ade20k import ADE20k
 from lib.data.customer_dataset import CustomerDataset
+
+
+
 
 
 def get_data_loader(cfg, mode='train'):
@@ -29,6 +33,9 @@ def get_data_loader(cfg, mode='train'):
 
     if dist.is_initialized():
         assert dist.is_available(), "dist should be initialzed"
+
+
+
         if mode == 'train':
             assert not cfg.max_iter is None
             n_train_imgs = cfg.ims_per_gpu * dist.get_world_size() * cfg.max_iter
@@ -42,7 +49,7 @@ def get_data_loader(cfg, mode='train'):
         dl = DataLoader(
             ds,
             batch_sampler=batchsampler,
-            num_workers=4,
+            num_workers=8,
             pin_memory=True,
         )
     else:
@@ -50,8 +57,8 @@ def get_data_loader(cfg, mode='train'):
             ds,
             batch_size=batchsize,
             shuffle=shuffle,
-            drop_last=drop_last,
-            num_workers=4,
+            drop_last=False,
+            num_workers=8,
             pin_memory=True,
         )
     return dl

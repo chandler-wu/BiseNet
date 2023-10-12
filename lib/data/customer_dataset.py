@@ -10,10 +10,12 @@ class CustomerDataset(BaseDataset):
 
     def __init__(self, dataroot, annpath, trans_func=None, mode='train'):
         super(CustomerDataset, self).__init__(
-            dataroot, annpath, trans_func, mode)
+                dataroot, annpath, trans_func, mode)
         self.lb_ignore = 255
 
         self.to_tensor = T.ToTensor(
-            mean=(0.4, 0.4, 0.4),  # rgb
+            mean=(0.4, 0.4, 0.4), # rgb
             std=(0.2, 0.2, 0.2),
         )
+
+

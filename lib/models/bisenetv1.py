@@ -17,11 +17,11 @@ class ConvBNReLU(nn.Module):
     def __init__(self, in_chan, out_chan, ks=3, stride=1, padding=1, *args, **kwargs):
         super(ConvBNReLU, self).__init__()
         self.conv = nn.Conv2d(in_chan,
-                              out_chan,
-                              kernel_size=ks,
-                              stride=stride,
-                              padding=padding,
-                              bias=False)
+                out_chan,
+                kernel_size = ks,
+                stride = stride,
+                padding = padding,
+                bias = False)
         self.bn = BatchNorm2d(out_chan)
         self.relu = nn.ReLU(inplace=True)
         self.init_weight()
@@ -66,7 +66,7 @@ class BiSeNetOutput(nn.Module):
         self.conv = ConvBNReLU(in_chan, mid_chan, ks=3, stride=1, padding=1)
         self.conv_out = nn.Conv2d(mid_chan, out_chan, kernel_size=1, bias=True)
         self.up = nn.Upsample(scale_factor=up_factor,
-                              mode='bilinear', align_corners=False)
+                mode='bilinear', align_corners=False)
         self.init_weight()
 
     def forward(self, x):
@@ -97,7 +97,7 @@ class AttentionRefinementModule(nn.Module):
     def __init__(self, in_chan, out_chan, *args, **kwargs):
         super(AttentionRefinementModule, self).__init__()
         self.conv = ConvBNReLU(in_chan, out_chan, ks=3, stride=1, padding=1)
-        self.conv_atten = nn.Conv2d(out_chan, out_chan, kernel_size=1, bias=False)
+        self.conv_atten = nn.Conv2d(out_chan, out_chan, kernel_size= 1, bias=False)
         self.bn_atten = BatchNorm2d(out_chan)
         #  self.sigmoid_atten = nn.Sigmoid()
         self.init_weight()
@@ -149,7 +149,7 @@ class ContextPath(nn.Module):
         feat16_up = self.up16(feat16_sum)
         feat16_up = self.conv_head16(feat16_up)
 
-        return feat16_up, feat32_up  # x8, x16
+        return feat16_up, feat32_up # x8, x16
 
     def init_weight(self):
         for ly in self.children():
@@ -209,11 +209,11 @@ class FeatureFusionModule(nn.Module):
         self.convblk = ConvBNReLU(in_chan, out_chan, ks=1, stride=1, padding=0)
         ## use conv-bn instead of 2 layer mlp, so that tensorrt 7.2.3.4 can work for fp16
         self.conv = nn.Conv2d(out_chan,
-                              out_chan,
-                              kernel_size=1,
-                              stride=1,
-                              padding=0,
-                              bias=False)
+                out_chan,
+                kernel_size = 1,
+                stride = 1,
+                padding = 0,
+                bias = False)
         self.bn = nn.BatchNorm2d(out_chan)
         #  self.conv1 = nn.Conv2d(out_chan,
         #          out_chan//4,
